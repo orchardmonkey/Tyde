@@ -38,6 +38,14 @@ namespace Tyde
 
 
     /// <summary>
+    /// The node factor is used to modify the amplitude for a given tide locale.  The amplitude is modified because
+    /// the moon's node (where the moon's orbit intersects the ecliptic) goes through an approximately 19 year cycle, 
+    /// the node factor is calculated for the middle of the epoch we are predicting tides for.
+    /// </summary>
+    public double NodeFactor { get; set; }
+
+
+    /// <summary>
     /// could be meters or feet, depending on if the desired tide prediction is to be in meters or feet.
     /// the amplitude is different, depending upon the tidal locale we are predicting for
     /// </summary>
