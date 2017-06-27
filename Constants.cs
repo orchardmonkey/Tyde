@@ -6,6 +6,10 @@ using System.Threading.Tasks;
 
 namespace Tyde
 {
+  /// <summary>
+  /// array indexes for harmonic constituents.
+  /// and doodson numbers used to calculate speeds of the constituents.
+  /// </summary>
   static class Constants
   {
     public const int M2 = 0;
@@ -47,6 +51,8 @@ namespace Tyde
     public const int MS4 = 36;
     public const int ConstitutentArraySize = 37;
 
+    // The next values are Doodson numbers
+    // https://en.wikipedia.org/wiki/Arthur_Thomas_Doodson
 
     /// <summary>
     /// Rotation of the Earth on its axis, with respect to the Sun, degrees per hour.
