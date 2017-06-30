@@ -25,7 +25,6 @@ namespace Tyde
       Speed = 0;
     }
 
-
     /// <summary>
     /// return an array of 37 harmonic constituents, initialized with descriptions and speeds.
     /// later we will update Phases and Amplitudes based on locale, and also update
@@ -249,17 +248,9 @@ namespace Tyde
     /// <returns>the height of this harmonic constituent</returns>
     public double Height (double hours)
     {
-      return Amplitude * Math.Cos(DegreesToRadians(Speed * hours + EquilibriumPhase - Phase));
+      return Amplitude * NodeFactor * Math.Cos(MathFuncs.DegreesToRadians(Speed * hours + EquilibriumPhase - Phase));
     }
 
-    /// <summary>
-    /// convert degrees to radians
-    /// </summary>
-    /// <param name="degrees">the degrees to convert</param>
-    /// <returns>the radians</returns>
-    public static double DegreesToRadians(double degrees)
-    {
-      return degrees * Math.PI / 180.0;
-    }
+
   }
 }

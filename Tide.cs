@@ -11,12 +11,20 @@ namespace Tyde
     HarmonicConstituent[] constituents;
 
     ////List<HarmonicConstituent> constituents = new List<HarmonicConstituent>();
-    DateTime epochStart = DateTime.Now;
+    DateTime epochStartGMT = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, DateTimeKind.Utc) ;
 
     public Tide()
     {
-      this.constituents = HarmonicConstituent.GetInitializedConstituents(); 
+      //this.constituents = HarmonicConstituent.GetInitializedConstituents();
+      epochStartGMT = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+      //epoch parms passed into Equilibrium tide need to be in GMT.  Probably Jan 1, 0 hour.
+      EquilibriumTide equilibriumTide = new EquilibriumTide(epochStartGMT.Year, epochStartGMT.Month, epochStartGMT.Day, 30);
+      this.constituents = equilibriumTide.Constituents;
+
+
       this.UpdateConstituentsForOlympia();
+
     }
 
     // update phases and amplitudes of the tidal constituents for Olympia.  Amplitudes are in meters.  Phases are in degrees.
@@ -60,7 +68,7 @@ namespace Tyde
       this.constituents[Constants.M4].EquilibriumPhase = 180.42;
       this.constituents[Constants.M6].EquilibriumPhase = 090.63;
 
-      epochStart = new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc).ToLocalTime();
+      
     }
 
     /// <summary>
@@ -83,7 +91,8 @@ namespace Tyde
     /// <returns>height of tide</returns>
     public double PredictTideHeight(DateTime timeOfCalculation)
     {
-      double hoursSinceEpochStart = (timeOfCalculation - epochStart).TotalHours;
+      timeOfCalculation = timeOfCalculation.ToUniversalTime();
+      double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
       return PredictTideHeight(hoursSinceEpochStart);
     }
 
