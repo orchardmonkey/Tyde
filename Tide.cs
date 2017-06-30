@@ -16,7 +16,7 @@ namespace Tyde
     public Tide()
     {
       //this.constituents = HarmonicConstituent.GetInitializedConstituents();
-      epochStartGMT = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+      epochStartGMT = new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
       //epoch parms passed into Equilibrium tide need to be in GMT.  Probably Jan 1, 0 hour.
       EquilibriumTide equilibriumTide = new EquilibriumTide(epochStartGMT.Year, epochStartGMT.Month, epochStartGMT.Day, 30);

@@ -126,23 +126,23 @@ namespace Tyde
       double P = startOfEpochLongitudes.LongitudeOfLunarPerigee;
       double H = startOfEpochLongitudes.LongitudeOfSun;
       double P1 = startOfEpochLongitudes.LongitudeOfSolarPerigee;
-      double T = MathFuncs.Angle(180.0 + epochStartHour * (360.0 / 24.0));
+      double T = MathFuncs.Angle(180.0 + epochStartHour * (360.0 / 24.0)); // hour angle of mean sun at place of observation
 
       // get values based on longitude of moon's node, these are calculated from the middle of the epoch.
       CelestialLongitudes middleOfEpochLongitudes = new CelestialLongitudes(epochStartYear, epochStartJulianDay, halfEpochLengthInHours);
-      double NU = middleOfEpochLongitudes.DNU;
-      double XI = middleOfEpochLongitudes.DXI;
+      double NU = middleOfEpochLongitudes.DNU; //v
+      double XI = middleOfEpochLongitudes.DXI; //e
       double NUP = middleOfEpochLongitudes.DNUP;
       double NUP2 = middleOfEpochLongitudes.DNUP2;
 
       // now fill in the equilibrium phases of the Harmonic Constituents.
-      this.Constituents[Constants.M2].EquilibriumPhase = MathFuncs.Angle(2.0 * (T - S + H));//// + 2.0 * (XI - NU));
+      this.Constituents[Constants.M2].EquilibriumPhase = MathFuncs.Angle(2.0 * (T - S + H) + 2.0 * (XI - NU));
       this.Constituents[Constants.S2].EquilibriumPhase = MathFuncs.Angle(2.0 * T);
-      this.Constituents[Constants.N2].EquilibriumPhase = MathFuncs.Angle(2.0 * (T + H) - 3.0 * S + P);//// + 2.0 * (XI - NU));
+      this.Constituents[Constants.N2].EquilibriumPhase = MathFuncs.Angle(2.0 * (T + H) - 3.0 * S + P + 2.0 * (XI - NU));
       this.Constituents[Constants.K1].EquilibriumPhase = MathFuncs.Angle(T + H - 90.0 - NUP);
-      this.Constituents[Constants.M4].EquilibriumPhase = MathFuncs.Angle(4.0 * (T - S + H) + 4.0); //// * (XI - NU));
-      this.Constituents[Constants.O1].EquilibriumPhase = MathFuncs.Angle(T - 2.0 * S + H + 90.0);/// + 2.0 * XI - NU);
-      this.Constituents[Constants.M6].EquilibriumPhase = MathFuncs.Angle(6.0 * (T - S + H) + 6.0); //// * (XI - NU));
+      this.Constituents[Constants.M4].EquilibriumPhase = MathFuncs.Angle(4.0 * (T - S + H) + 4.0 * (XI - NU));
+      this.Constituents[Constants.O1].EquilibriumPhase = MathFuncs.Angle(T - 2.0 * S + H + 90.0 + 2.0 * XI - NU);
+      this.Constituents[Constants.M6].EquilibriumPhase = MathFuncs.Angle(6.0 * (T - S + H) + 6.0 * (XI - NU));
       this.Constituents[Constants.MK3].EquilibriumPhase = MathFuncs.Angle(3.0 * (T + H) - 2.0 * S - 90.0 + 2.0 * (XI - NU) - NUP);
       this.Constituents[Constants.S4].EquilibriumPhase = MathFuncs.Angle(4.0 * T);
       this.Constituents[Constants.MN4].EquilibriumPhase = MathFuncs.Angle(4.0 * (T + H) - 5.0 * S + P + 4.0 * (XI - NU));

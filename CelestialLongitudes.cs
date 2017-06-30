@@ -91,14 +91,14 @@ namespace Tyde
       this.LongitudeOfMoon = MathFuncs.Angle(LongitudeOfMoon);
 
       double N = MathFuncs.DegreesToRadians(LongitudeOfMoonsNode);  
-      double I = Math.Acos(.9136949 - .0356926 * Math.Cos(N));
-      this.DI = MathFuncs.Angle(MathFuncs.RadiansToDegrees(I)); 
+      double I = Math.Acos(.9136949 - .0356926 * Math.Cos(N));  
+      this.DI = MathFuncs.Angle(MathFuncs.RadiansToDegrees(I));  
 
-      double NU = Math.Asin(.0897056 * Math.Sin(N) / Math.Sin(I));
-      this.DNU = MathFuncs.RadiansToDegrees(NU); 
+      double NU = Math.Asin(.0897056 * Math.Sin(N) / Math.Sin(I)); 
+      this.DNU = MathFuncs.RadiansToDegrees(NU); //v
 
-      double XI = N - 2.0 * Math.Atan(.64412 * Math.Atan(N / 2.0)) - NU;
-      this.DXI = MathFuncs.RadiansToDegrees(XI); 
+      double XI = N - 2.0 * Math.Atan(.64412 * Math.Tan(N / 2.0)) - NU;  
+      this.DXI = MathFuncs.RadiansToDegrees(XI); //e
 
       double NUP = Math.Atan(Math.Sin(NU) / (Math.Cos(NU) + .334766 / Math.Sin(2.0 * I)));
       this.DNUP = MathFuncs.RadiansToDegrees(NUP); 
