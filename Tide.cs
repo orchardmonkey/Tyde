@@ -11,12 +11,13 @@ namespace Tyde
     HarmonicConstituent[] constituents;
 
     ////List<HarmonicConstituent> constituents = new List<HarmonicConstituent>();
-    DateTime epochStartGMT = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, DateTimeKind.Utc) ;
+    DateTime epochStartGMT = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc) ;
+//    DateTime epochStartGMT = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, DateTimeKind.Utc);
 
     public Tide()
     {
       //this.constituents = HarmonicConstituent.GetInitializedConstituents();
-      epochStartGMT = new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+      ////epochStartGMT = new DateTime(2017, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
       //epoch parms passed into Equilibrium tide need to be in GMT.  Probably Jan 1, 0 hour.
       EquilibriumTide equilibriumTide = new EquilibriumTide(epochStartGMT.Year, epochStartGMT.Month, epochStartGMT.Day, 30);
@@ -59,14 +60,14 @@ namespace Tyde
       // so, the equilbrium phase for the sun at the meridian, 0:00 am GMT is always 0, because the sun is at nadir.
       // https://en.wikipedia.org/wiki/Arthur_Thomas_Doodson
       // add in equilibrium phases, until we finish code to calculate them.
-      this.constituents[Constants.M2].EquilibriumPhase = 270.21;
-      this.constituents[Constants.K1].EquilibriumPhase = 017.70;
-      this.constituents[Constants.O1].EquilibriumPhase = 248.94;
-      this.constituents[Constants.S2].EquilibriumPhase = 000.00;
-      this.constituents[Constants.N2].EquilibriumPhase = 016.12;
-      this.constituents[Constants.P1].EquilibriumPhase = 349.19;
-      this.constituents[Constants.M4].EquilibriumPhase = 180.42;
-      this.constituents[Constants.M6].EquilibriumPhase = 090.63;
+      ////this.constituents[Constants.M2].EquilibriumPhase = 270.21;
+      ////this.constituents[Constants.K1].EquilibriumPhase = 017.70;
+      ////this.constituents[Constants.O1].EquilibriumPhase = 248.94;
+      ////this.constituents[Constants.S2].EquilibriumPhase = 000.00;
+      ////this.constituents[Constants.N2].EquilibriumPhase = 016.12;
+      ////this.constituents[Constants.P1].EquilibriumPhase = 349.19;
+      ////this.constituents[Constants.M4].EquilibriumPhase = 180.42;
+      ////this.constituents[Constants.M6].EquilibriumPhase = 090.63;
 
       
     }
@@ -79,7 +80,7 @@ namespace Tyde
     private double PredictTideHeight(double hoursSinceEpochStart)
     {
       double tideInMeters =  constituents.Sum(c => c.Height(hoursSinceEpochStart));
-      return tideInMeters * 3.28 + 8.1; // convert meters to feet and add mean water level of ~9 (guess)
+      return tideInMeters * 3.28 + 8.6; // convert meters to feet and add mean water level of ~9 (guess)
 
 
     }
@@ -91,7 +92,7 @@ namespace Tyde
     /// <returns>height of tide</returns>
     public double PredictTideHeight(DateTime timeOfCalculation)
     {
-      timeOfCalculation = timeOfCalculation.ToUniversalTime();
+      timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
       double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
       return PredictTideHeight(hoursSinceEpochStart);
     }

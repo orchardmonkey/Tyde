@@ -51,7 +51,8 @@ namespace Tyde
     public const int MS4 = 36;
     public const int ConstitutentArraySize = 37;
 
-    // The next values are Doodson numbers
+    // The next values are Doodson numbers, and are all that is necessary to calculate the speed in 
+    // degrees per hour of each of the harmonic constituent waveforms.
     // https://en.wikipedia.org/wiki/Arthur_Thomas_Doodson
 
     /// <summary>

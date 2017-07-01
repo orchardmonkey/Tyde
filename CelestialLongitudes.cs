@@ -33,37 +33,39 @@ namespace Tyde
     /// </summary>
     public double LongitudeOfSolarPerigee { get; private set; }
 
+    // the following calculations are based on the Manual Of Harmonic Analysis and Prediction of Tides by Paul Schureman
 
     /// <summary>
-    /// trig based on longitude of Moon's node.
+    /// capital I, from Schureman p156 first equation.  Values for each degree of longitude of Moon's node given in Schureman table 6.
     /// </summary>
-    public double DI { get; private set; }
-
+    public double Schureman_I { get; private set; }
 
     /// <summary>
-    /// trig based on longitude of Moon's node.
+    /// little V, Schureman p156.  Values for each degree of longitude of Moon's node given in Schureman table 6.
     /// </summary>
-    public double DNU { get; private set; }
-
+    public double Schureman_v { get; private set; }
 
     /// <summary>
-    /// trig based on longitude of Moon's node.
+    /// Ɛ epsilon, Schureman p 156, third equation.  Values for each degree of longitude of Moon's node given in Schureman table 6.
+    /// usage explained Schureman p 23.  
     /// </summary>
-    public double DXI { get; private set; }
+    public double Schureman_e { get; private set; }
 
 
     /// <summary>
-    /// trig based on longitude of Moon's node and longitude of Lunar Perigee.
+    /// trig based on longitude of Moon's node and longitude of Lunar Perigee, used for calculating node factors
+    /// P is the mean longitude of the lunar perigee reckoned from the lunar intersection.
+    /// Equation 191, Schureman p 41
     /// </summary>
-    public double DPC { get; private set; }
+    public double Schureman_P { get; private set; }
 
     /// <summary>
-    /// trig based on longitude of Moon's node
+    /// trig based on longitude of Moon's node, used for calculating node factors
     /// </summary>
     public double DNUP { get; private set; }
 
     /// <summary>
-    /// trig based on longitude of Moon's node
+    /// trig based on longitude of Moon's node, used for calculating node factors
     /// </summary>
     public double DNUP2 { get; private set; }
 
@@ -90,23 +92,32 @@ namespace Tyde
       this.LongitudeOfMoon = 277.0256206 + 129.38482032 * yearsSince1900 + 13.176396768 * additionalDays + .549016532 * doubleHour;
       this.LongitudeOfMoon = MathFuncs.Angle(LongitudeOfMoon);
 
-      double N = MathFuncs.DegreesToRadians(LongitudeOfMoonsNode);  
-      double I = Math.Acos(.9136949 - .0356926 * Math.Cos(N));  
-      this.DI = MathFuncs.Angle(MathFuncs.RadiansToDegrees(I));  
+      // the following calculations are based on the Manual Of Harmonic Analysis and Prediction of Tides by Paul Schureman
 
-      double NU = Math.Asin(.0897056 * Math.Sin(N) / Math.Sin(I)); 
-      this.DNU = MathFuncs.RadiansToDegrees(NU); //v
+      // I, from Schureman p156 first equation.  Values for each degree of longitude of Moon's node given in Schureman table 6.
+      double N = MathFuncs.DegreesToRadians(LongitudeOfMoonsNode); 
+      double IRadians = Math.Acos(.9136949 - .0356926 * Math.Cos(N));  
+      this.Schureman_I = MathFuncs.Angle(MathFuncs.RadiansToDegrees(IRadians));
 
-      double XI = N - 2.0 * Math.Atan(.64412 * Math.Tan(N / 2.0)) - NU;  
-      this.DXI = MathFuncs.RadiansToDegrees(XI); //e
+      // little V, Schureman p156.  Values for each degree of longitude of Moon's node given in Schureman table 6.
+      double vRadians = Math.Asin(.0897056 * Math.Sin(N) / Math.Sin(IRadians)); 
+      this.Schureman_v = MathFuncs.RadiansToDegrees(vRadians); //v
 
-      double NUP = Math.Atan(Math.Sin(NU) / (Math.Cos(NU) + .334766 / Math.Sin(2.0 * I)));
+      // epsilon, Schureman p 156, third equation.  Values for each degree of longitude of Moon's node given in Schureman table 6.
+      double epsilonRadians = N - 2.0 * Math.Atan(.64412 * Math.Tan(N / 2.0)) - vRadians;  
+      this.Schureman_e = MathFuncs.RadiansToDegrees(epsilonRadians); 
+
+      // used for node factor calculations
+      double NUP = Math.Atan(Math.Sin(vRadians) / (Math.Cos(vRadians) + .334766 / Math.Sin(2.0 * IRadians)));
       this.DNUP = MathFuncs.RadiansToDegrees(NUP); 
 
-      double NUP2 = Math.Atan(Math.Sin(2.0 * NU) / (Math.Cos(2.0 * NU) + .0726184 / (Math.Sin(I) * Math.Sin(I)))) / 2.0;
-      this.DNUP2 = MathFuncs.RadiansToDegrees(NUP2); 
+      // used for node factor calculations
+      double NUP2 = Math.Atan(Math.Sin(2.0 * vRadians) / (Math.Cos(2.0 * vRadians) + .0726184 / (Math.Sin(IRadians) * Math.Sin(IRadians)))) / 2.0;
+      this.DNUP2 = MathFuncs.RadiansToDegrees(NUP2);
 
-      this.DPC = MathFuncs.Angle(this.LongitudeOfLunarPerigee - this.DXI);
+      // P is the mean longitude of the lunar perigee reckoned from the lunar intersection.
+      // Equation 191, Schureman p 41
+      this.Schureman_P = MathFuncs.Angle(this.LongitudeOfLunarPerigee - this.Schureman_e);
     }
 
 
