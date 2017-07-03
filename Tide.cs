@@ -11,7 +11,7 @@ namespace Tyde
     HarmonicConstituent[] constituents;
 
     ////List<HarmonicConstituent> constituents = new List<HarmonicConstituent>();
-    DateTime epochStartGMT = new DateTime(DateTime.Now.Year, 1, 1, 0, 0, 0, DateTimeKind.Utc) ;
+    DateTime epochStartGMT = new DateTime(2017, 1, 1, 0, 0, 0, DateTimeKind.Utc) ;
 //    DateTime epochStartGMT = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0, DateTimeKind.Utc);
 
     public Tide()
@@ -31,29 +31,55 @@ namespace Tyde
     // update phases and amplitudes of the tidal constituents for Olympia.  Amplitudes are in meters.  Phases are in degrees.
     public void UpdateConstituentsForOlympia()
     {
-      this.constituents[Constants.M2].Amplitude = 1.464;
-      this.constituents[Constants.M2].Phase = 29.9;
+      ////this.constituents[Constants.M2].Amplitude = 1.464;
+      ////this.constituents[Constants.M2].Phase = 29.9;
 
-      this.constituents[Constants.K1].Amplitude = 0.849;
-      this.constituents[Constants.K1].Phase = 288.7;
+      ////this.constituents[Constants.K1].Amplitude = 0.849;
+      ////this.constituents[Constants.K1].Phase = 288.7;
 
-      this.constituents[Constants.O1].Amplitude = 0.463;
-      this.constituents[Constants.O1].Phase = 265.1;
+      ////this.constituents[Constants.O1].Amplitude = 0.463;
+      ////this.constituents[Constants.O1].Phase = 265.1;
 
-      this.constituents[Constants.S2].Amplitude = 0.348;
-      this.constituents[Constants.S2].Phase = 062.4;
+      ////this.constituents[Constants.S2].Amplitude = 0.348;
+      ////this.constituents[Constants.S2].Phase = 062.4;
 
-      this.constituents[Constants.N2].Amplitude = 0.281;
-      this.constituents[Constants.N2].Phase = 004.3;
+      ////this.constituents[Constants.N2].Amplitude = 0.281;
+      ////this.constituents[Constants.N2].Phase = 004.3;
 
-      this.constituents[Constants.P1].Amplitude = 0.248;
-      this.constituents[Constants.P1].Phase = 287.6;
+      ////this.constituents[Constants.P1].Amplitude = 0.248;
+      ////this.constituents[Constants.P1].Phase = 287.6;
 
-      this.constituents[Constants.M4].Amplitude = 0.055;
-      this.constituents[Constants.M4].Phase = 291.0;
+      ////this.constituents[Constants.M4].Amplitude = 0.055;
+      ////this.constituents[Constants.M4].Phase = 291.0;
 
-      this.constituents[Constants.M6].Amplitude = 0.032;
-      this.constituents[Constants.M6].Phase = 142.1;
+      ////this.constituents[Constants.M6].Amplitude = 0.032;
+      ////this.constituents[Constants.M6].Phase = 142.1;
+
+      // these are in feet and degrees 
+      this.constituents[Constants.M2].Amplitude = 4.79;
+      this.constituents[Constants.M2].Phase = 30.3;
+
+      this.constituents[Constants.K1].Amplitude = 2.88;
+      this.constituents[Constants.K1].Phase = 289.6;
+
+      this.constituents[Constants.O1].Amplitude = 1.55;
+      this.constituents[Constants.O1].Phase = 266.4;
+
+      this.constituents[Constants.S2].Amplitude = 1.13;
+      this.constituents[Constants.S2].Phase = 062;
+
+      this.constituents[Constants.N2].Amplitude = 0.91;
+      this.constituents[Constants.N2].Phase = 004.5;
+
+      this.constituents[Constants.P1].Amplitude = 0.88;
+      this.constituents[Constants.P1].Phase = 285.3;
+
+      this.constituents[Constants.M4].Amplitude = 0.16;
+      this.constituents[Constants.M4].Phase = 294.4;
+
+      this.constituents[Constants.M6].Amplitude = 0.1;
+      this.constituents[Constants.M6].Phase = 143.8;
+
 
 
       // equilibrium phase is calculated for the epoch start, and is the phase of the constituent for the meridian 0 degrees longitude, GMT, assuming perfect tidal bulge, no continents or shallow shelves.
@@ -69,7 +95,7 @@ namespace Tyde
       ////this.constituents[Constants.M4].EquilibriumPhase = 180.42;
       ////this.constituents[Constants.M6].EquilibriumPhase = 090.63;
 
-      
+
     }
 
     /// <summary>
@@ -80,7 +106,9 @@ namespace Tyde
     private double PredictTideHeight(double hoursSinceEpochStart)
     {
       double tideInMeters =  constituents.Sum(c => c.Height(hoursSinceEpochStart));
-      return tideInMeters * 3.28 + 8.6; // convert meters to feet and add mean water level of ~9 (guess)
+      ////return tideInMeters * 3.28 + 8.6; // convert meters to feet and add mean water level of ~9 (guess)
+
+      return tideInMeters + 8.333; // add Mean Lower Low Water
 
 
     }
@@ -92,6 +120,12 @@ namespace Tyde
     /// <returns>height of tide</returns>
     public double PredictTideHeight(DateTime timeOfCalculation)
     {
+      // for some reason, we are about 1/2 hour early in predictions for Budd Inlet, etc.
+      // i.e. for a given time we are displaying the tide as it will be ~30 minutes in the future.
+
+      // so subtract 30 minutes from our time of calculation before calculating.
+      timeOfCalculation = timeOfCalculation - new TimeSpan(0, 0, 0);
+
       timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
       double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
       return PredictTideHeight(hoursSinceEpochStart);
