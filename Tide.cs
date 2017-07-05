@@ -98,20 +98,6 @@ namespace Tyde
 
     }
 
-    /// <summary>
-    /// predict height of Tide by summing the height of the constituents for a given number of hours since epoch start.  
-    /// </summary>
-    /// <param name="hoursSinceEpochStart">hours since the start of the epoch  that our constituent Amplitudes and Phases were calculated for</param>
-    /// <returns>height of tide in feet</returns>
-    private double PredictTideHeight(double hoursSinceEpochStart)
-    {
-      double tideInMeters =  constituents.Sum(c => c.Height(hoursSinceEpochStart));
-      ////return tideInMeters * 3.28 + 8.6; // convert meters to feet and add mean water level of ~9 (guess)
-
-      return tideInMeters + 8.333; // add Mean Lower Low Water
-
-
-    }
 
     /// <summary>
     /// predict height of Tide by summing the height of the constituents for a given number of hours since epoch start.  
@@ -123,12 +109,18 @@ namespace Tyde
       // for some reason, we are about 1/2 hour early in predictions for Budd Inlet, etc.
       // i.e. for a given time we are displaying the tide as it will be ~30 minutes in the future.
 
-      // so subtract 30 minutes from our time of calculation before calculating.
-      timeOfCalculation = timeOfCalculation - new TimeSpan(0, 0, 0);
 
       timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
       double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
-      return PredictTideHeight(hoursSinceEpochStart);
+      return HarmonicConstituent.PredictTideHeight(hoursSinceEpochStart, this.constituents, 8.333);
+    }
+
+    public double PredictRateOfChange(DateTime timeOfCalculation)
+    {
+      timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
+      double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
+      return HarmonicConstituent.PredictRateOfChange(hoursSinceEpochStart, this.constituents);
+
     }
 
 
