@@ -5,8 +5,9 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Tyde"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="650" Width="525">
     <Grid>
-        
+        <DataGrid x:Name="dataGrid" AutoGenerateColumns="True" HorizontalAlignment="Stretch" Margin="5,5,5,5" VerticalAlignment="Stretch" ItemsSource="{Binding TableData}"/>
+
     </Grid>
 </Window>

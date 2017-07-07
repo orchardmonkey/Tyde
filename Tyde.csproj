@@ -57,6 +57,7 @@
     </ApplicationDefinition>
     <Compile Include="CelestialLongitudes.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="DisplayRow.cs" />
     <Compile Include="EquilibriumTide.cs" />
     <Compile Include="HarmonicConstituent.cs" />
     <Compile Include="MathFuncs.cs" />

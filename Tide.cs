@@ -98,6 +98,53 @@ namespace Tyde
 
     }
 
+    /// <summary>
+    /// use Newton's method to solve for zero.
+    /// x sub(n+1) = x sub(n) - f(X)/f1(X)
+    /// </summary>
+    /// <param name="height"></param>
+    /// <returns></returns>
+    public DateTime? FindTimeForHeight(double targetHeight, DateTime startTime)
+    {
+      DateTime targetTime = startTime;
+
+      for (int i = 0; i < 5; i++)
+      {
+        double startingHeight = PredictTideHeight(targetTime);
+        double startingSlope = PredictRateOfChange(targetTime);
+        double hours = HoursSinceEpochStart(targetTime);
+        double nexthours = hours - (startingHeight - targetHeight) / startingSlope;
+        targetTime = DateTimeFromHoursSinceEpochStart(nexthours);
+      }
+
+      double endHeight = PredictTideHeight(targetTime);
+      if (endHeight - targetHeight > .05 || endHeight - targetHeight < -.05)
+      {
+        return null;
+      }
+
+      return targetTime;
+    }
+
+    /// <summary>
+    /// Does the opposite of HoursSinceEpochStart
+    /// </summary>
+    /// <param name="hours"></param>
+    /// <returns></returns>
+    private DateTime DateTimeFromHoursSinceEpochStart(double hours)
+    {
+      DateTime dateTime = epochStartGMT + TimeSpan.FromHours(hours);
+      dateTime = dateTime.ToLocalTime();
+      return dateTime;
+    }
+
+    private double HoursSinceEpochStart(DateTime timeOfCalculation)
+    {
+      timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
+      double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
+      return hoursSinceEpochStart;
+    }
+
 
     /// <summary>
     /// predict height of Tide by summing the height of the constituents for a given number of hours since epoch start.  
@@ -110,16 +157,12 @@ namespace Tyde
       // i.e. for a given time we are displaying the tide as it will be ~30 minutes in the future.
 
 
-      timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
-      double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
-      return HarmonicConstituent.PredictTideHeight(hoursSinceEpochStart, this.constituents, 8.333);
+      return HarmonicConstituent.PredictTideHeight(HoursSinceEpochStart(timeOfCalculation), this.constituents, 8.333);
     }
 
     public double PredictRateOfChange(DateTime timeOfCalculation)
     {
-      timeOfCalculation = timeOfCalculation.ToUniversalTime(); //calculate GMT at same instant.
-      double hoursSinceEpochStart = (timeOfCalculation - epochStartGMT).TotalHours;
-      return HarmonicConstituent.PredictRateOfChange(hoursSinceEpochStart, this.constituents);
+      return HarmonicConstituent.PredictRateOfChange(HoursSinceEpochStart(timeOfCalculation), this.constituents);
 
     }
 
