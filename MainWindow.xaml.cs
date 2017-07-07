@@ -43,7 +43,7 @@ namespace Tyde
 
       TableData.Add(new DisplayRow());
 
-      // find 7' tides, for every 2 hour increment.  So 12 per day  
+      // find 7' tides, for every 2 hour increment.  So try 12x per day  
       int days = 10;
       HashSet<DateTime> sevenTimes = new HashSet<DateTime>();
 
@@ -58,12 +58,16 @@ namespace Tyde
         }
       }
 
+      // sort the 7' tides by date and time
       List<DateTime> listSeven = sevenTimes.OrderBy(i => i).ToList();
 
       foreach (DateTime sevenTime in listSeven)
       {
         this.AddDisplayTime(tideCalculator, sevenTime);
       }
+
+
+      // now pair up consecutive rising and falling tides.  These will be the beginning and end of our good kayaking times.
 
 
 

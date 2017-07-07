@@ -100,9 +100,12 @@ namespace Tyde
 
     /// <summary>
     /// use Newton's method to solve for zero.
-    /// x sub(n+1) = x sub(n) - f(X)/f1(X)
+    /// basically, our next x value is current x - f(x)/f1(x)
+    /// where f1(x) is the derivative of f(x) with respect to x
+    /// in this case, f1(x) is PredictRateOfChange
+    /// and f(x) is PredictTideHeight
     /// </summary>
-    /// <param name="height"></param>
+    /// <param name="height">height of tide we wish to calculate occurrence time for</param>
     /// <returns></returns>
     public DateTime? FindTimeForHeight(double targetHeight, DateTime startTime)
     {
@@ -119,6 +122,13 @@ namespace Tyde
 
       double endHeight = PredictTideHeight(targetTime);
       if (endHeight - targetHeight > .05 || endHeight - targetHeight < -.05)
+      {
+        return null;
+      }
+
+      // sometimes if our start time is too close to slack tide, then the slope is almost zero.
+      // so when we divide by the slope to get our next x, we jump many days - returning a value that is too far off.
+      if (targetTime - startTime > new TimeSpan(3,0,0) || startTime - targetTime > new TimeSpan(3,0,0) )
       {
         return null;
       }
@@ -155,15 +165,18 @@ namespace Tyde
     {
       // for some reason, we are about 1/2 hour early in predictions for Budd Inlet, etc.
       // i.e. for a given time we are displaying the tide as it will be ~30 minutes in the future.
-
+      timeOfCalculation = timeOfCalculation - new TimeSpan(0, 15, 0);
 
       return HarmonicConstituent.PredictTideHeight(HoursSinceEpochStart(timeOfCalculation), this.constituents, 8.333);
     }
 
     public double PredictRateOfChange(DateTime timeOfCalculation)
     {
-      return HarmonicConstituent.PredictRateOfChange(HoursSinceEpochStart(timeOfCalculation), this.constituents);
+      // for some reason, we are about 1/2 hour early in predictions for Budd Inlet, etc.
+      // i.e. for a given time we are displaying the tide as it will be ~30 minutes in the future.
+      timeOfCalculation = timeOfCalculation - new TimeSpan(0, 15, 0);
 
+      return HarmonicConstituent.PredictRateOfChange(HoursSinceEpochStart(timeOfCalculation), this.constituents);
     }
 
 
