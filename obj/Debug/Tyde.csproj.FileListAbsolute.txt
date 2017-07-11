@@ -1,7 +1,6 @@
 C:\Users\scottf\Tyde\bin\Debug\Tyde.exe.config
 C:\Users\scottf\Tyde\bin\Debug\Tyde.exe
 C:\Users\scottf\Tyde\bin\Debug\Tyde.pdb
-C:\Users\scottf\Tyde\obj\Debug\Tyde.csprojResolveAssemblyReference.cache
 C:\Users\scottf\Tyde\obj\Debug\MainWindow.g.cs
 C:\Users\scottf\Tyde\obj\Debug\App.g.cs
 C:\Users\scottf\Tyde\obj\Debug\Tyde_MarkupCompile.cache
@@ -12,3 +11,4 @@ C:\Users\scottf\Tyde\obj\Debug\Tyde.Properties.Resources.resources
 C:\Users\scottf\Tyde\obj\Debug\Tyde.csproj.GenerateResource.Cache
 C:\Users\scottf\Tyde\obj\Debug\Tyde.exe
 C:\Users\scottf\Tyde\obj\Debug\Tyde.pdb
+C:\Users\scottf\Tyde\obj\Debug\Tyde.csprojResolveAssemblyReference.cache

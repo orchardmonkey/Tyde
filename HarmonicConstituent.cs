@@ -26,24 +26,6 @@ namespace Tyde
     }
 
     /// <summary>
-    /// predict height of Tide by summing the height of the constituents for a given number of hours since epoch start.  
-    /// </summary>
-    /// <param name="hoursSinceEpochStart">hours since the start of the epoch  that our constituent Amplitudes and Phases were calculated for</param>
-    /// <returns>height of tide in feet</returns>
-    public static double PredictTideHeight(double hoursSinceEpochStart, HarmonicConstituent[] constituents, double meanLowerLowWater)
-    {
-      double tideInMeters = constituents.Sum(c => c.Height(hoursSinceEpochStart));
-      ////return tideInMeters * 3.28 + 8.6; // convert meters to feet and add mean water level of ~9 (guess)
-
-      return tideInMeters + meanLowerLowWater; // 8.333; // add Mean Lower Low Water
-    }
-
-    public static double PredictRateOfChange(double hoursSinceEpochStart, HarmonicConstituent[] constituents)
-    {
-      return constituents.Sum(c => c.RateOfChange(hoursSinceEpochStart));
-    }
-
-    /// <summary>
     /// return an array of 37 harmonic constituents, initialized with descriptions and speeds.
     /// later we will update Phases and Amplitudes based on locale, and also update
     /// EquilibriumPhases and NodeFactors based on the theoretical equilibrium tide calculated for our prediction epoch.
@@ -260,7 +242,7 @@ namespace Tyde
     public double Speed { get; set; }
 
     /// <summary>
-    /// Calculate the height of this constituent.
+    /// Calculate the height of this constituent.  Same units (probably feet or meters) as the amplitude
     /// </summary>
     /// <param name="h">the number of hours since the start of the epoch that the equilibrium phases are based on.</param>
     /// <returns>the height of this harmonic constituent</returns>
@@ -270,13 +252,25 @@ namespace Tyde
     }
 
     /// <summary>
-    /// this is the derivative of the Height function.
+    /// this is the derivative of the Height function, it returns speed of the tide
+    /// Same units (probably feet or meters) per hour as the amplitude
     /// </summary>
-    /// <param name="hours"></param>
-    /// <returns></returns>
+    /// <param name="hours">hours since epoch start</param>
+    /// <returns>speed of tide</returns>
     public double RateOfChange (double hours)
     {
       return -1 * Amplitude * NodeFactor * (Math.PI/180) * Speed * Math.Sin(MathFuncs.DegreesToRadians(Speed * hours + EquilibriumPhase - Phase));
+    }
+
+    /// <summary>
+    /// this is the derivative of the RateOfChange function, it returns the acceleration of the tide
+    /// Same units (probably feet or meters) per hour per hour as the amplitude
+    /// </summary>
+    /// <param name="hours">hours since epoch start</param>
+    /// <returns>the acceleration of the tide</returns>
+    public double AccelerationOfChange(double hours)
+    {
+      return -1 * Amplitude * NodeFactor * (Math.PI / 180) * Speed * (Math.PI / 180) * Speed * Math.Cos(MathFuncs.DegreesToRadians(Speed * hours + EquilibriumPhase - Phase));
     }
 
 

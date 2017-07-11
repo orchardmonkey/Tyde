@@ -60,8 +60,8 @@
     <Compile Include="DisplayRow.cs" />
     <Compile Include="EquilibriumTide.cs" />
     <Compile Include="HarmonicConstituent.cs" />
+    <Compile Include="HarmonicConstituents.cs" />
     <Compile Include="MathFuncs.cs" />
-    <Compile Include="Tide.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

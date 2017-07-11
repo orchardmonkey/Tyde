@@ -12,5 +12,7 @@ namespace Tyde
     public string TideHeight { get; set; }
 
     public string TideSpeed { get; set; }
+
+    public string TideAcceleration { get; set; }
   }
 }
