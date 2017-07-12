@@ -57,6 +57,48 @@ namespace Tyde
       this.Constituents = equilibriumTide.Constituents;
     }
 
+    public List<double> FindTimesForHeight(double height, double hoursSinceEpochStart, double hoursToSearch)
+    {
+      HashSet<double> foundHours = new HashSet<double>();
+
+      // search every 2 hours
+      for (double searchHour = hoursSinceEpochStart; searchHour < hoursSinceEpochStart + hoursToSearch; searchHour += 2)
+      {
+        double? foundHour = this.FindTimeForHeight(height, searchHour);
+        //double? sevenTime = this.constituents.FindTimeForRateOfChange(0, HoursSinceEpochStart(startOfToday + new TimeSpan(i * 2, 0, 0)));
+        if (foundHour.HasValue)
+        {
+          // truncate to two decimal places to make it easier to drop duplicates.
+          // truncating to two decimal places is approimately truncating to the nearest minute.
+          foundHour = ((double)((int)(foundHour.Value * 100))) / 100.0;
+          foundHours.Add(foundHour.Value);
+        }
+      }
+      return foundHours.OrderBy(hour => hour).ToList();
+    }
+
+
+    public List<double> FindTimesForRateOfChange(double rateOfchange, double hoursSinceEpochStart, double hoursToSearch)
+    {
+      HashSet<double> foundHours = new HashSet<double>();
+
+      // search every 2 hours
+      for (double searchHour = hoursSinceEpochStart; searchHour < hoursSinceEpochStart + hoursToSearch; searchHour += 2)
+      {
+        double? foundHour = this.FindTimeForRateOfChange(rateOfchange, searchHour);
+        //double? sevenTime = this.constituents.FindTimeForRateOfChange(0, HoursSinceEpochStart(startOfToday + new TimeSpan(i * 2, 0, 0)));
+        if (foundHour.HasValue)
+        {
+          // truncate to two decimal places to make it easier to drop duplicates.
+          // truncating to two decimal places is approimately truncating to the nearest minute.
+          foundHour = ((double)((int)(foundHour.Value * 100))) / 100.0;
+          foundHours.Add(foundHour.Value);
+        }
+      }
+      return foundHours.OrderBy(hour => hour).ToList();
+    }
+
+
     /// <summary>
     /// use Newton's method to solve for zero.
     /// basically, our next x value is current x - f(x)/f1(x)

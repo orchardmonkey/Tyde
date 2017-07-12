@@ -40,61 +40,24 @@ namespace Tyde
       this.AddDisplay(DateTime.Now);
       TableData.Add(new DisplayRow());
 
-      DateTime startOfToday = DateTime.Now.Date; // + new TimeSpan(365,0,0,0);
+      List<double> timesToDisplayToday = this.constituents.FindTimesForHeight(7, HoursSinceEpochStart(DateTime.Now.Date), 24);
+      timesToDisplayToday.AddRange(this.constituents.FindTimesForRateOfChange(0, HoursSinceEpochStart(DateTime.Now.Date), 24));
 
-      for (int hour = 0; hour <= 24; hour++)
+      timesToDisplayToday = timesToDisplayToday.OrderBy(i => i).ToList();
+      
+      foreach (double d in timesToDisplayToday)
       {
-        DateTime predictionTime = startOfToday + new TimeSpan(hour, 0, 0);
-        this.AddDisplay(predictionTime);
+        this.AddDisplay(this.DateTimeFromHoursSinceEpochStart(d));
       }
+
 
       TableData.Add(new DisplayRow());
 
-      // find 7' tides, for every 2 hour increment.  So try 12x per day  
-      int days = 10;
-      HashSet<DateTime> sevenTimes = new HashSet<DateTime>();
-
-
-      for (int i = 0; i < days * 365; i++)
+      List<double> timesForSevenFootTides = this.constituents.FindTimesForHeight(7, HoursSinceEpochStart(DateTime.Now), 365 * 24);
+      foreach (double hours in timesForSevenFootTides)
       {
-        double? sevenTime = this.constituents.FindTimeForHeight(7, HoursSinceEpochStart(startOfToday + new TimeSpan(i * 2, 0, 0)));
-        //double? sevenTime = this.constituents.FindTimeForRateOfChange(0, HoursSinceEpochStart(startOfToday + new TimeSpan(i * 2, 0, 0)));
-        if (sevenTime.HasValue)
-        {
-          // chop off seconds so the hashset will throw away duplicates
-          DateTime dateTime = DateTimeFromHoursSinceEpochStart(sevenTime.Value);
-          sevenTimes.Add(new DateTime(dateTime.Year, dateTime.Month, dateTime.Day, dateTime.Hour, dateTime.Minute, 0));
-        }
+        this.AddDisplay(this.DateTimeFromHoursSinceEpochStart(hours));
       }
-
-      // sort the 7' tides by date and time
-      List<DateTime> listSeven = sevenTimes.OrderBy(i => i).ToList();
-
-      foreach (DateTime sevenTime in listSeven)
-      {
-        this.AddDisplay(sevenTime);
-      }
-
-    }
-
-    public List<double> FindTimesForHeight(double height, double hoursSinceEpochStart, double hoursToSearch)
-    {
-      HashSet<double> foundHours = new HashSet<double>();
-
-      // search every 2 hours
-      for (double searchHour = hoursSinceEpochStart; searchHour < hoursSinceEpochStart + hoursToSearch; searchHour += 2)
-      {
-        double? foundHour = this.constituents.FindTimeForHeight(height, searchHour);
-        //double? sevenTime = this.constituents.FindTimeForRateOfChange(0, HoursSinceEpochStart(startOfToday + new TimeSpan(i * 2, 0, 0)));
-        if (foundHour.HasValue)
-        {
-          // truncate to two decimal places to make it easier to drop duplicates.
-          // truncating to two decimal places is approimately truncating to the nearest minute.
-          foundHour = ((double)((int)(foundHour.Value * 100))) / 100.0;
-          foundHours.Add(foundHour.Value);
-        }
-      }
-      return foundHours.OrderBy(hour => hour).ToList();
     }
 
     public void UpdateForOlympia()
