@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,6 +15,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+
 
 namespace Tyde
 {
@@ -37,6 +39,35 @@ namespace Tyde
 
     public void CalculateTides()
     {
+      List<Google.Apis.Calendar.v3.Data.Event> calendarEvents = new List<Google.Apis.Calendar.v3.Data.Event>();
+
+      // find all slack tides for today
+      List<double> slackTides = this.constituents.FindTimesForRateOfChange(0, this.HoursSinceEpochStart(DateTime.Now.Date), 24);
+      // now build google calendar events for each slack tide
+      foreach (double slackHoursSinceEpochStart in slackTides)
+      {
+        Google.Apis.Calendar.v3.Data.Event calendarEvent = new Google.Apis.Calendar.v3.Data.Event();
+        DateTime slackTime = this.DateTimeFromHoursSinceEpochStart(slackHoursSinceEpochStart);
+        double tideHeight = this.constituents.PredictTideHeight(slackHoursSinceEpochStart);
+        double tideSpeed = this.constituents.PredictRateOfChange(slackHoursSinceEpochStart);
+        double tideAcceleration = this.constituents.PredictAccelerationOfChange(slackHoursSinceEpochStart);
+
+        calendarEvent.Summary = "High Tide " + tideHeight.ToString("0.0") + " ft";
+        if (tideAcceleration > 0)
+        {
+          calendarEvent.Summary = "Low Tide " + tideHeight.ToString("0.0") + " ft";
+        }
+
+        //newEvent.Summary = "7ft+ tide";
+        calendarEvent.Start = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = slackTime, TimeZone = "America/Los_Angeles" };
+        calendarEvent.End = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = slackTime + new TimeSpan(0, 5, 0), TimeZone = "America/Los_Angeles" };
+        calendarEvents.Add(calendarEvent);
+      }
+      // now add all slack tides to google calendar
+      this.AddGoogleCalendarEvents(calendarEvents, "primary");
+
+
+
       this.AddDisplay(DateTime.Now);
       TableData.Add(new DisplayRow());
 
@@ -90,6 +121,48 @@ namespace Tyde
       this.constituents.HourlyOffset = -0.25;
       this.constituents.MeanLowerLowWater = 8.333;
 
+    }
+
+    public void AddGoogleCalendarEvents(List<Google.Apis.Calendar.v3.Data.Event> calendarEvents, string calendarID = "primary")
+    {
+      // If modifying these scopes, delete your previously saved credentials
+      // at ~/.credentials/calendar-dotnet-quickstart.json
+      // static string[] Scopes = { CalendarService.Scope.CalendarReadonly };
+      string[] scopes = { Google.Apis.Calendar.v3.CalendarService.Scope.Calendar };
+
+      ////https://www.googleapis.com/auth/calendar
+      string ApplicationName = "Google Calendar API .NET Quickstart";
+
+      Google.Apis.Auth.OAuth2.UserCredential credential;
+
+      using (var stream =
+          new FileStream("client_secret.json", FileMode.Open, FileAccess.Read))
+      {
+        string credPath = System.Environment.GetFolderPath(
+            System.Environment.SpecialFolder.Personal);
+        credPath = System.IO.Path.Combine(credPath, ".credentials/calendar-dotnet-quickstart.json");
+
+        credential = Google.Apis.Auth.OAuth2.GoogleWebAuthorizationBroker.AuthorizeAsync(
+            Google.Apis.Auth.OAuth2.GoogleClientSecrets.Load(stream).Secrets,
+            scopes,
+            "user",
+            System.Threading.CancellationToken.None,
+            new Google.Apis.Util.Store.FileDataStore(credPath, true)).Result;
+        ////Console.WriteLine("Credential file saved to: " + credPath);
+      }
+
+      // Create Google Calendar API service.
+      var service = new Google.Apis.Calendar.v3.CalendarService(new Google.Apis.Services.BaseClientService.Initializer()
+      {
+        HttpClientInitializer = credential,
+        ApplicationName = ApplicationName,
+      });
+
+      foreach (Google.Apis.Calendar.v3.Data.Event calendarEvent in calendarEvents)
+      {
+        Google.Apis.Calendar.v3.EventsResource.InsertRequest insertRequest = service.Events.Insert(calendarEvent, calendarID);
+        insertRequest.Execute();
+      }
     }
 
     /// <summary>
