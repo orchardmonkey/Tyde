@@ -12,6 +12,7 @@ namespace Tyde
 
     /// <summary>
     /// offset if harmonic constants are a little bit off from real tide.
+    /// negative causes tidal events will be predicted to occur at a later time.
     /// </summary>
     public double HourlyOffset { get; set; }
 

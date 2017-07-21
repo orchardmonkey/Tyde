@@ -24,14 +24,13 @@ namespace Tyde
   /// </summary>
   public partial class MainWindow : Window
   {
-    private HarmonicConstituents constituents = new HarmonicConstituents(2017, 01, 01, 360);
+    private HarmonicConstituents constituents = new HarmonicConstituents(1983, 01, 01, 360);
 
     public List<DisplayRow> TableData { get; set; }
 
     public MainWindow()
     {
       this.TableData = new List<DisplayRow>();
-      this.UpdateForOlympia();
       this.CalculateTides();
       this.DataContext = this;
       InitializeComponent();
@@ -39,59 +38,12 @@ namespace Tyde
 
     public void CalculateTides()
     {
-      List<Google.Apis.Calendar.v3.Data.Event> calendarEvents = new List<Google.Apis.Calendar.v3.Data.Event>();
-      double hoursToUpdate = 24 * 7;
+      //this.UpdateForOlympia();
 
-      // find all slack tides for today
-      List<double> slackTides = this.constituents.FindTimesForRateOfChange(0, this.HoursSinceEpochStart(DateTime.Now.Date), hoursToUpdate);
-      // now build google calendar events for each slack tide
-      foreach (double slackHoursSinceEpochStart in slackTides)
-      {
-        Google.Apis.Calendar.v3.Data.Event calendarEvent = new Google.Apis.Calendar.v3.Data.Event();
-        DateTime slackTime = this.DateTimeFromHoursSinceEpochStart(slackHoursSinceEpochStart);
-        double tideHeight = this.constituents.PredictTideHeight(slackHoursSinceEpochStart);
-        double tideSpeed = this.constituents.PredictRateOfChange(slackHoursSinceEpochStart);
-        double tideAcceleration = this.constituents.PredictAccelerationOfChange(slackHoursSinceEpochStart);
+      this.UpdateForSeattle();
 
-        calendarEvent.Summary = "High Tide " + tideHeight.ToString("0.0") + " ft";
-        if (tideAcceleration > 0)
-        {
-          calendarEvent.Summary = "Low Tide " + tideHeight.ToString("0.0") + " ft";
-        }
-
-        //newEvent.Summary = "7ft+ tide";
-        calendarEvent.Start = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = slackTime, TimeZone = "America/Los_Angeles" };
-        calendarEvent.End = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = slackTime + new TimeSpan(0, 5, 0), TimeZone = "America/Los_Angeles" };
-        calendarEvents.Add(calendarEvent);
-      }
-
-      // find all 7 foot tides for today
-      List<double> sevenFootTides = this.constituents.FindTimesForHeight(7, this.HoursSinceEpochStart(DateTime.Now.Date), hoursToUpdate);
-      double previousTideSpeed = -1000;
-      DateTime previousSevenFootTime = DateTime.Now;
-      // now build google calendar events for each 7 foot tide
-      foreach (double sevenFootTide in sevenFootTides)
-      {
-        Google.Apis.Calendar.v3.Data.Event calendarEvent = new Google.Apis.Calendar.v3.Data.Event();
-        DateTime sevenFootTime = this.DateTimeFromHoursSinceEpochStart(sevenFootTide);
-        double tideHeight = this.constituents.PredictTideHeight(sevenFootTide);
-        double tideSpeed = this.constituents.PredictRateOfChange(sevenFootTide);
-        double tideAcceleration = this.constituents.PredictAccelerationOfChange(sevenFootTide);
-
-        calendarEvent.Summary = "7ft+ tide ";
-
-        if (tideSpeed < 0 && previousTideSpeed > 0)
-        { 
-          calendarEvent.Start = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = previousSevenFootTime, TimeZone = "America/Los_Angeles" };
-          calendarEvent.End = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = sevenFootTime, TimeZone = "America/Los_Angeles" };
-          calendarEvents.Add(calendarEvent);
-        }
-
-        previousTideSpeed = tideSpeed;
-        previousSevenFootTime = sevenFootTime;
-      }
-      // now add all tide events to the google calendar
-      this.AddGoogleCalendarEvents(calendarEvents, "fvstjtakaqodoqs3flv76tqg7o@group.calendar.google.com");
+      //AddTidesToGoogleCalendar(DateTime.Now.Date + new TimeSpan(1,0,0,0,0), 24 * 7, 7);
+      //AddSlackTidesToGoogleCalendar(DateTime.Now.Date + new TimeSpan(1, 0, 0, 0, 0), 24 * 7);
 
 
       this.AddDisplay(DateTime.Now);
@@ -149,7 +101,118 @@ namespace Tyde
 
     }
 
-    public void AddGoogleCalendarEvents(List<Google.Apis.Calendar.v3.Data.Event> calendarEvents, string calendarID = "primary")
+    /// <summary>
+    /// update with NOAA harmonic constituents for Seattle 9447130
+    /// </summary>
+    public void UpdateForSeattle()
+    {
+      // these are in feet and degrees 
+      this.constituents.Constituents[Constants.M2].Amplitude = 3.52;
+      this.constituents.Constituents[Constants.M2].Phase = 10.6;
+
+      this.constituents.Constituents[Constants.S2].Amplitude = 0.88;
+      this.constituents.Constituents[Constants.S2].Phase = 37.0;
+
+      this.constituents.Constituents[Constants.N2].Amplitude = 0.71;
+      this.constituents.Constituents[Constants.N2].Phase = 340.8;
+
+
+      this.constituents.Constituents[Constants.K1].Amplitude = 2.74;
+      this.constituents.Constituents[Constants.K1].Phase = 277.0;
+
+      this.constituents.Constituents[Constants.M4].Amplitude = 0.07;
+      this.constituents.Constituents[Constants.M4].Phase = 200.2;
+
+      this.constituents.Constituents[Constants.O1].Amplitude = 1.51;
+      this.constituents.Constituents[Constants.O1].Phase = 254.6;
+
+      this.constituents.Constituents[Constants.M6].Amplitude = 0.03;
+      this.constituents.Constituents[Constants.M6].Phase = 313.6;
+
+      this.constituents.Constituents[Constants.MK3].Amplitude = 0.11;
+      this.constituents.Constituents[Constants.MK3].Phase = 78.1;
+
+      this.constituents.Constituents[Constants.SA].Amplitude = 0.25;
+      this.constituents.Constituents[Constants.SA].Phase = 292.9;
+
+      this.constituents.Constituents[Constants.Q1].Amplitude = 0.25;
+      this.constituents.Constituents[Constants.Q1].Phase = 249.9;
+
+      this.constituents.Constituents[Constants.P1].Amplitude = 0.85;
+      this.constituents.Constituents[Constants.P1].Phase = 276.6;
+
+
+
+      this.constituents.HourlyOffset = 0;
+      this.constituents.MeanLowerLowWater = 8.333 - 1.41; //7.94
+
+    }
+
+
+    private void AddTidesToGoogleCalendar(DateTime startTime, double hoursToUpdate, double height)
+    {
+      List<Google.Apis.Calendar.v3.Data.Event> calendarEvents = new List<Google.Apis.Calendar.v3.Data.Event>();
+
+      // find all {height} foot tides for today
+      List<double> sevenFootTides = this.constituents.FindTimesForHeight(height, this.HoursSinceEpochStart(startTime), hoursToUpdate);
+      double previousTideSpeed = -1000;
+      DateTime previousSevenFootTime = DateTime.Now;
+      // now build google calendar events for each {height} foot tide
+      foreach (double sevenFootTide in sevenFootTides)
+      {
+        Google.Apis.Calendar.v3.Data.Event calendarEvent = new Google.Apis.Calendar.v3.Data.Event();
+        DateTime sevenFootTime = this.DateTimeFromHoursSinceEpochStart(sevenFootTide);
+        double tideHeight = this.constituents.PredictTideHeight(sevenFootTide);
+        double tideSpeed = this.constituents.PredictRateOfChange(sevenFootTide);
+        double tideAcceleration = this.constituents.PredictAccelerationOfChange(sevenFootTide);
+
+        calendarEvent.Summary = $"{height.ToString("0.0")}ft+ tide ";
+
+        if (tideSpeed < 0 && previousTideSpeed > 0)
+        {
+          calendarEvent.Start = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = previousSevenFootTime, TimeZone = "America/Los_Angeles" };
+          calendarEvent.End = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = sevenFootTime, TimeZone = "America/Los_Angeles" };
+          calendarEvents.Add(calendarEvent);
+        }
+
+        previousTideSpeed = tideSpeed;
+        previousSevenFootTime = sevenFootTime;
+      }
+      // now add all tide events to the google calendar
+      this.AddGoogleCalendarEvents(calendarEvents, "fvstjtakaqodoqs3flv76tqg7o@group.calendar.google.com");
+    }
+
+    private void AddSlackTidesToGoogleCalendar(DateTime startTime, double hoursToUpdate)
+    {
+      List<Google.Apis.Calendar.v3.Data.Event> calendarEvents = new List<Google.Apis.Calendar.v3.Data.Event>();
+
+      // find all slack tides for today
+      List<double> slackTides = this.constituents.FindTimesForRateOfChange(0, this.HoursSinceEpochStart(startTime), hoursToUpdate);
+      // now build google calendar events for each slack tide
+      foreach (double slackHoursSinceEpochStart in slackTides)
+      {
+        Google.Apis.Calendar.v3.Data.Event calendarEvent = new Google.Apis.Calendar.v3.Data.Event();
+        DateTime slackTime = this.DateTimeFromHoursSinceEpochStart(slackHoursSinceEpochStart);
+        double tideHeight = this.constituents.PredictTideHeight(slackHoursSinceEpochStart);
+        double tideSpeed = this.constituents.PredictRateOfChange(slackHoursSinceEpochStart);
+        double tideAcceleration = this.constituents.PredictAccelerationOfChange(slackHoursSinceEpochStart);
+
+        calendarEvent.Summary = "High Tide " + tideHeight.ToString("0.0") + " ft";
+        if (tideAcceleration > 0)
+        {
+          calendarEvent.Summary = "Low Tide " + tideHeight.ToString("0.0") + " ft";
+        }
+
+        calendarEvent.Start = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = slackTime, TimeZone = "America/Los_Angeles" };
+        calendarEvent.End = new Google.Apis.Calendar.v3.Data.EventDateTime() { DateTime = slackTime + new TimeSpan(0, 5, 0), TimeZone = "America/Los_Angeles" };
+        calendarEvents.Add(calendarEvent);
+      }
+
+      // now add all tide events to the google calendar
+      this.AddGoogleCalendarEvents(calendarEvents, "fvstjtakaqodoqs3flv76tqg7o@group.calendar.google.com");
+    }
+
+    private void AddGoogleCalendarEvents(List<Google.Apis.Calendar.v3.Data.Event> calendarEvents, string calendarID = "primary")
     {
       // If modifying these scopes, delete your previously saved credentials
       // at ~/.credentials/calendar-dotnet-quickstart.json
