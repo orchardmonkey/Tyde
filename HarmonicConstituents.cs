@@ -72,7 +72,11 @@ namespace Tyde
           // truncate to two decimal places to make it easier to drop duplicates.
           // truncating to two decimal places is approimately truncating to the nearest minute.
           foundHour = ((double)((int)(foundHour.Value * 100))) / 100.0;
-          foundHours.Add(foundHour.Value);
+
+          if (foundHour >= hoursSinceEpochStart && foundHour <= hoursSinceEpochStart + hoursToSearch)
+          {
+            foundHours.Add(foundHour.Value);
+          }
         }
       }
       return foundHours.OrderBy(hour => hour).ToList();
@@ -93,7 +97,11 @@ namespace Tyde
           // truncate to two decimal places to make it easier to drop duplicates.
           // truncating to two decimal places is approimately truncating to the nearest minute.
           foundHour = ((double)((int)(foundHour.Value * 100))) / 100.0;
-          foundHours.Add(foundHour.Value);
+
+          if (foundHour >= hoursSinceEpochStart && foundHour <= hoursSinceEpochStart + hoursToSearch)
+          {
+            foundHours.Add(foundHour.Value);
+          }
         }
       }
       return foundHours.OrderBy(hour => hour).ToList();

@@ -24,7 +24,7 @@ namespace Tyde
   /// </summary>
   public partial class MainWindow : Window
   {
-    private HarmonicConstituents constituents = new HarmonicConstituents(1983, 01, 01, 360);
+    private HarmonicConstituents constituents = new HarmonicConstituents(2017, 07, 22, 1);
 
     public List<DisplayRow> TableData { get; set; }
 
@@ -38,9 +38,9 @@ namespace Tyde
 
     public void CalculateTides()
     {
-      //this.UpdateForOlympia();
+      this.UpdateForOlympia();
 
-      this.UpdateForSeattle();
+      //this.UpdateForSeattle();
 
       //AddTidesToGoogleCalendar(DateTime.Now.Date + new TimeSpan(1,0,0,0,0), 24 * 7, 7);
       //AddSlackTidesToGoogleCalendar(DateTime.Now.Date + new TimeSpan(1, 0, 0, 0, 0), 24 * 7);
@@ -49,8 +49,9 @@ namespace Tyde
       this.AddDisplay(DateTime.Now);
       TableData.Add(new DisplayRow());
 
-      List<double> timesToDisplayToday = this.constituents.FindTimesForHeight(7, HoursSinceEpochStart(DateTime.Now.Date), 24);
-      timesToDisplayToday.AddRange(this.constituents.FindTimesForRateOfChange(0, HoursSinceEpochStart(DateTime.Now.Date), 24));
+      List<double> timesToDisplayToday = new List<double>();
+      ///timesToDisplayToday.AddRange(this.constituents.FindTimesForHeight(7, HoursSinceEpochStart(DateTime.Now.Date), 24));
+      timesToDisplayToday.AddRange(this.constituents.FindTimesForRateOfChange(0, HoursSinceEpochStart(DateTime.Now.Date), 24 * 2));
 
       timesToDisplayToday = timesToDisplayToday.OrderBy(i => i).ToList();
       
@@ -60,13 +61,13 @@ namespace Tyde
       }
 
 
-      TableData.Add(new DisplayRow());
+      ////TableData.Add(new DisplayRow());
 
-      List<double> timesForSevenFootTides = this.constituents.FindTimesForHeight(7, HoursSinceEpochStart(DateTime.Now), 365 * 24);
-      foreach (double hours in timesForSevenFootTides)
-      {
-        this.AddDisplay(this.DateTimeFromHoursSinceEpochStart(hours));
-      }
+      ////List<double> timesForSevenFootTides = this.constituents.FindTimesForHeight(7, HoursSinceEpochStart(DateTime.Now), 365 * 24);
+      ////foreach (double hours in timesForSevenFootTides)
+      ////{
+      ////  this.AddDisplay(this.DateTimeFromHoursSinceEpochStart(hours));
+      ////}
     }
 
     public void UpdateForOlympia()
@@ -75,28 +76,118 @@ namespace Tyde
       this.constituents.Constituents[Constants.M2].Amplitude = 4.79;
       this.constituents.Constituents[Constants.M2].Phase = 30.3;
 
-      this.constituents.Constituents[Constants.K1].Amplitude = 2.88;
-      this.constituents.Constituents[Constants.K1].Phase = 289.6;
-
-      this.constituents.Constituents[Constants.O1].Amplitude = 1.55;
-      this.constituents.Constituents[Constants.O1].Phase = 266.4;
-
       this.constituents.Constituents[Constants.S2].Amplitude = 1.13;
-      this.constituents.Constituents[Constants.S2].Phase = 062;
+      this.constituents.Constituents[Constants.S2].Phase = 62.0;
 
       this.constituents.Constituents[Constants.N2].Amplitude = 0.91;
-      this.constituents.Constituents[Constants.N2].Phase = 004.5;
+      this.constituents.Constituents[Constants.N2].Phase = 4.5;
 
-      this.constituents.Constituents[Constants.P1].Amplitude = 0.88;
-      this.constituents.Constituents[Constants.P1].Phase = 285.3;
+      this.constituents.Constituents[Constants.K1].Amplitude = 2.88;
+      this.constituents.Constituents[Constants.K1].Phase = 289.6;
 
       this.constituents.Constituents[Constants.M4].Amplitude = 0.16;
       this.constituents.Constituents[Constants.M4].Phase = 294.4;
 
+      this.constituents.Constituents[Constants.O1].Amplitude = 1.55;
+      this.constituents.Constituents[Constants.O1].Phase = 266.4;
+
       this.constituents.Constituents[Constants.M6].Amplitude = 0.1;
       this.constituents.Constituents[Constants.M6].Phase = 143.8;
 
-      this.constituents.HourlyOffset = -0.25;
+      this.constituents.Constituents[Constants.MK3].Amplitude = 0.1;
+      this.constituents.Constituents[Constants.MK3].Phase = 145.8;
+
+      this.constituents.Constituents[Constants.S4].Amplitude = 0.01;
+      this.constituents.Constituents[Constants.S4].Phase = 334.8;
+
+      this.constituents.Constituents[Constants.MN4].Amplitude = 0.07;
+      this.constituents.Constituents[Constants.MN4].Phase = 265.4;
+
+      this.constituents.Constituents[Constants.NU2].Amplitude = 0.21;
+      this.constituents.Constituents[Constants.NU2].Phase = 10.6;
+
+      this.constituents.Constituents[Constants.S6].Amplitude = 0.00;
+      this.constituents.Constituents[Constants.S6].Phase = 0.0;
+
+      this.constituents.Constituents[Constants.MU2].Amplitude = 0.08;
+      this.constituents.Constituents[Constants.MU2].Phase = 193.0;
+
+      this.constituents.Constituents[Constants._2N2].Amplitude = 0.11;
+      this.constituents.Constituents[Constants._2N2].Phase = 345.2;
+
+      this.constituents.Constituents[Constants.OO1].Amplitude = 0.09;
+      this.constituents.Constituents[Constants.OO1].Phase = 5.6;
+
+      this.constituents.Constituents[Constants.LAMBDA2].Amplitude = 0.09;
+      this.constituents.Constituents[Constants.LAMBDA2].Phase = 46.8;
+
+      this.constituents.Constituents[Constants.S1].Amplitude = 0.06;
+      this.constituents.Constituents[Constants.S1].Phase = 63.5;
+
+      this.constituents.Constituents[Constants.M1].Amplitude = 0.06;
+      this.constituents.Constituents[Constants.M1].Phase = 309.0;
+
+      this.constituents.Constituents[Constants.J1].Amplitude = 0.17;
+      this.constituents.Constituents[Constants.J1].Phase = 331.4;
+
+      this.constituents.Constituents[Constants.MM].Amplitude = 0.00;
+      this.constituents.Constituents[Constants.MM].Phase = 00.0;
+
+      this.constituents.Constituents[Constants.SSA].Amplitude = 0.11;
+      this.constituents.Constituents[Constants.SSA].Phase = 231.1;
+
+      this.constituents.Constituents[Constants.SA].Amplitude = 0.25;
+      this.constituents.Constituents[Constants.SA].Phase = 292.9;
+
+      this.constituents.Constituents[Constants.MSF].Amplitude = 0.0;
+      this.constituents.Constituents[Constants.MSF].Phase = 0.0;
+
+      this.constituents.Constituents[Constants.MF].Amplitude = 0.07;
+      this.constituents.Constituents[Constants.MF].Phase = 140.5;
+
+      this.constituents.Constituents[Constants.RHO1].Amplitude = 0.08;
+      this.constituents.Constituents[Constants.RHO1].Phase = 269.8;
+
+      this.constituents.Constituents[Constants.Q1].Amplitude = 0.23;
+      this.constituents.Constituents[Constants.Q1].Phase = 264.7;
+
+      this.constituents.Constituents[Constants.T2].Amplitude = 0.05;
+      this.constituents.Constituents[Constants.T2].Phase = 69.9;
+
+      this.constituents.Constituents[Constants.R2].Amplitude = 0.04;
+      this.constituents.Constituents[Constants.R2].Phase = 118.3;
+
+      this.constituents.Constituents[Constants._2Q1].Amplitude = 0.03;
+      this.constituents.Constituents[Constants._2Q1].Phase = 238.2;
+
+      this.constituents.Constituents[Constants.P1].Amplitude = 0.88;
+      this.constituents.Constituents[Constants.P1].Phase = 285.3;
+
+      this.constituents.Constituents[Constants._2SM2].Amplitude = 0.05;
+      this.constituents.Constituents[Constants._2SM2].Phase = 273.4;
+
+      this.constituents.Constituents[Constants.M3].Amplitude = 0.02;
+      this.constituents.Constituents[Constants.M3].Phase = 254.8;
+
+      this.constituents.Constituents[Constants.L2].Amplitude = 0.22;
+      this.constituents.Constituents[Constants.L2].Phase = 64.4;
+
+      this.constituents.Constituents[Constants._2MK3].Amplitude = 0.02;
+      this.constituents.Constituents[Constants._2MK3].Phase = 267.3;
+
+      this.constituents.Constituents[Constants.K2].Amplitude = 0.32;
+      this.constituents.Constituents[Constants.K2].Phase = 58.8;
+
+      this.constituents.Constituents[Constants.M8].Amplitude = 0.01;
+      this.constituents.Constituents[Constants.M8].Phase = 18.8;
+
+      this.constituents.Constituents[Constants.MS4].Amplitude = 0.1;
+      this.constituents.Constituents[Constants.MS4].Phase = 313.7;
+
+
+
+
+      // this.constituents.HourlyOffset = -0.25;
       this.constituents.MeanLowerLowWater = 8.333;
 
     }
@@ -116,7 +207,6 @@ namespace Tyde
       this.constituents.Constituents[Constants.N2].Amplitude = 0.71;
       this.constituents.Constituents[Constants.N2].Phase = 340.8;
 
-
       this.constituents.Constituents[Constants.K1].Amplitude = 2.74;
       this.constituents.Constituents[Constants.K1].Phase = 277.0;
 
@@ -132,19 +222,99 @@ namespace Tyde
       this.constituents.Constituents[Constants.MK3].Amplitude = 0.11;
       this.constituents.Constituents[Constants.MK3].Phase = 78.1;
 
+      this.constituents.Constituents[Constants.S4].Amplitude = 0.00;
+      this.constituents.Constituents[Constants.S4].Phase = 0.0;
+
+      this.constituents.Constituents[Constants.MN4].Amplitude = 0.03;
+      this.constituents.Constituents[Constants.MN4].Phase = 174.0;
+
+      this.constituents.Constituents[Constants.NU2].Amplitude = 0.15;
+      this.constituents.Constituents[Constants.NU2].Phase = 354.9;
+
+      this.constituents.Constituents[Constants.S6].Amplitude = 0.00;
+      this.constituents.Constituents[Constants.S6].Phase = 0.0;
+
+      this.constituents.Constituents[Constants.MU2].Amplitude = 0.11;
+      this.constituents.Constituents[Constants.MU2].Phase = 236.6;
+
+      this.constituents.Constituents[Constants._2N2].Amplitude = 0.08;
+      this.constituents.Constituents[Constants._2N2].Phase = 308.7;
+
+      this.constituents.Constituents[Constants.OO1].Amplitude = 0.1;
+      this.constituents.Constituents[Constants.OO1].Phase = 328.9;
+
+      ////this.constituents.Constituents[Constants._2N2].Amplitude = 0.1;
+      ////this.constituents.Constituents[Constants._2N2].Phase = 328.9;
+
+      this.constituents.Constituents[Constants.LAMBDA2].Amplitude = 0.07;
+      this.constituents.Constituents[Constants.LAMBDA2].Phase = 48.4;
+
+      this.constituents.Constituents[Constants.S1].Amplitude = 0.05;
+      this.constituents.Constituents[Constants.S1].Phase = 44.2;
+
+      this.constituents.Constituents[Constants.M1].Amplitude = 0.09;
+      this.constituents.Constituents[Constants.M1].Phase = 319.8;
+
+      this.constituents.Constituents[Constants.J1].Amplitude = 0.13;
+      this.constituents.Constituents[Constants.J1].Phase = 315.2;
+
+      this.constituents.Constituents[Constants.MM].Amplitude = 0.00;
+      this.constituents.Constituents[Constants.MM].Phase = 00.0;
+
+      this.constituents.Constituents[Constants.SSA].Amplitude = 0.11;
+      this.constituents.Constituents[Constants.SSA].Phase = 231.1;
+
       this.constituents.Constituents[Constants.SA].Amplitude = 0.25;
       this.constituents.Constituents[Constants.SA].Phase = 292.9;
+
+      this.constituents.Constituents[Constants.MSF].Amplitude = 0.0;
+      this.constituents.Constituents[Constants.MSF].Phase = 0.0;
+
+      this.constituents.Constituents[Constants.MF].Amplitude = 0.07;
+      this.constituents.Constituents[Constants.MF].Phase = 140.5;
+
+      this.constituents.Constituents[Constants.RHO1].Amplitude = 0.05;
+      this.constituents.Constituents[Constants.RHO1].Phase = 246.6;
 
       this.constituents.Constituents[Constants.Q1].Amplitude = 0.25;
       this.constituents.Constituents[Constants.Q1].Phase = 249.9;
 
+      this.constituents.Constituents[Constants.T2].Amplitude = 0.05;
+      this.constituents.Constituents[Constants.T2].Phase = 37.1;
+
+      this.constituents.Constituents[Constants.R2].Amplitude = 0.01;
+      this.constituents.Constituents[Constants.R2].Phase = 38.0;
+
+      this.constituents.Constituents[Constants._2Q1].Amplitude = 0.03;
+      this.constituents.Constituents[Constants._2Q1].Phase = 251.5;
+
       this.constituents.Constituents[Constants.P1].Amplitude = 0.85;
       this.constituents.Constituents[Constants.P1].Phase = 276.6;
 
+      this.constituents.Constituents[Constants._2SM2].Amplitude = 0.03;
+      this.constituents.Constituents[Constants._2SM2].Phase = 282.6;
+
+      this.constituents.Constituents[Constants.M3].Amplitude = 0.02;
+      this.constituents.Constituents[Constants.M3].Phase = 342.4;
+
+      this.constituents.Constituents[Constants.L2].Amplitude = 0.15;
+      this.constituents.Constituents[Constants.L2].Phase = 56.1;
+
+      this.constituents.Constituents[Constants._2MK3].Amplitude = 0.11;
+      this.constituents.Constituents[Constants._2MK3].Phase = 46.7;
+
+      this.constituents.Constituents[Constants.K2].Amplitude = 0.26;
+      this.constituents.Constituents[Constants.K2].Phase = 37.9;
+
+      this.constituents.Constituents[Constants.M8].Amplitude = 0.0;
+      this.constituents.Constituents[Constants.M8].Phase = 0.0;
+
+      this.constituents.Constituents[Constants.MS4].Amplitude = 0.04;
+      this.constituents.Constituents[Constants.MS4].Phase = 229.9;
 
 
       this.constituents.HourlyOffset = 0;
-      this.constituents.MeanLowerLowWater = 8.333 - 1.41; //7.94
+      this.constituents.MeanLowerLowWater = 6.623; /// 8.333 - 1.41 - 0.35; //7.94?
 
     }
 
@@ -281,9 +451,9 @@ namespace Tyde
       TableData.Add(new DisplayRow()
       {
         Time = displayTime.ToShortDateString() + " " + displayTime.ToShortTimeString(),
-        TideHeight = this.constituents.PredictTideHeight(hoursSinceEpochStart).ToString("0.0"),
-        TideSpeed = this.constituents.PredictRateOfChange(hoursSinceEpochStart).ToString("0.0"),
-        TideAcceleration = this.constituents.PredictAccelerationOfChange(hoursSinceEpochStart).ToString("0.0")
+        TideHeight = this.constituents.PredictTideHeight(hoursSinceEpochStart).ToString("0.00"),
+        TideSpeed = this.constituents.PredictRateOfChange(hoursSinceEpochStart).ToString("0.00"),
+        TideAcceleration = this.constituents.PredictAccelerationOfChange(hoursSinceEpochStart).ToString("0.00")
       });
     }
 
